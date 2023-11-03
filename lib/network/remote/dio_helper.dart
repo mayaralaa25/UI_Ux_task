@@ -17,9 +17,6 @@ class DioHelper
     required String url,
     Map<String, dynamic>? query,
   }) async {
-    dio.options.headers = {
-      'Content-Type': 'application/json',
-    };
     return await dio.get(url, queryParameters: query);
   }
 
