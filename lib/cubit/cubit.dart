@@ -6,6 +6,8 @@ import 'package:figma_task/modules/support/support_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../network/remote/dio_helper.dart';
+
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(InitialAppState());
   static AppCubit get(context) => BlocProvider.of(context);
@@ -61,5 +63,24 @@ class AppCubit extends Cubit<AppStates> {
     // if (index == 2) getScience();
     // if (index == 3) getScience();
     emit(AppBottomNavState());
+  }
+
+  List<dynamic> users = [];
+
+  void getUsers() {
+    emit(GetUsersLoadingState());
+    if (users.isEmpty) {
+      DioHelper.getData(
+          url: 'users',
+      ).then((value) {
+        users = value.data;
+        print(users[0]['name']);
+        emit(GetUsersSuccessState());
+      }).catchError((error) {
+        print(error.toString());
+        emit(GetUsersErrorState(error.toString()));
+      });
+    } else
+      emit(GetUsersSuccessState());
   }
 }

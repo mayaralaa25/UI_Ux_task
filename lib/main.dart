@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 
-void main() {
+import 'network/remote/dio_helper.dart';
+
+void main() async{
+  DioHelper.init();
   runApp(const MyApp());
 }
 
@@ -16,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AppCubit(),
+      create: (context) => AppCubit()..getUsers(),
       child: BlocConsumer<AppCubit, AppStates>(
           listener: (context, state) {},
           builder: (context, state) {

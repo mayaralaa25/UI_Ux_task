@@ -1,9 +1,12 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:figma_task/cubit/cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../cubit/states.dart';
 import '../../shared/colors.dart';
 
 class HomeScreen extends StatefulWidget
@@ -116,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               color: white,
               child: Column(
                 children: [
-                  // Tab bar view for categories, services, and orders
+                  // Tab bar view for users, services, and orders
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Container(
@@ -136,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             children: [
                               ButtonBar(
                                   children: [
-                                    textButton(0, 'Categories'),
+                                    textButton(0, 'Users'),
                                     textButton(1, 'Services'),
                                     textButton(2, 'Orders(0)'),
                                   ]
@@ -151,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   SizedBox(
                     height: 50.h,
                     child: currentIndex == 0 ?
-                        // Categories content
+                        // Users content
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Column(
@@ -160,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Categories View',
+                                  'Users View',
                                   style: TextStyle(fontSize: 11.sp),
                                 ),
                                 Text(
@@ -172,11 +175,20 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 ),
                               ],
                             ),
+                            SizedBox(height: 1.h,),
                             SizedBox(
                               height: 30.h,
-                              child: ListView.builder(
-                                itemCount: categories.length,
-                                  itemBuilder: (context, index) => listViewBuilder(index)),
+                              child: BlocConsumer<AppCubit, AppStates>(
+                                  listener: (context, state) {},
+                                  builder: (context, state) {
+                                    var cubit = AppCubit.get(context);
+                                    return cubit.users.isEmpty? Center(child: CircularProgressIndicator()):
+                                    ListView.builder(
+                                        itemCount: cubit.users.length,
+                                        itemBuilder: (context, index) =>
+                                            listViewBuilder(cubit.users[index]));
+                                  }
+                              ),
                             ),
                           ],
                         ),
@@ -251,7 +263,7 @@ int carouselIndex = 0;
         child: Image.asset('assets/images/img_2.png', fit: BoxFit.fill));
   }
 
-  Widget listViewBuilder(int index)
+  Widget listViewBuilder(var user)
   {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -271,9 +283,9 @@ int carouselIndex = 0;
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Image.asset(categories[index]['icon'],scale: 2,),
+              child: Text('${user['id']}'),
             ),
-            Text(categories[index]['title']),
+            Text(user['name']),
             Spacer(),
             Icon(Icons.arrow_forward, color: Colors.grey,),
           ],
@@ -282,12 +294,4 @@ int carouselIndex = 0;
       ),
     );
   }
-  List<Map<String, dynamic>> categories =
-    [
-      {'title':'Constructions','icon':'assets/images/img_4.png'},
-      {'title':'Insurances','icon':'assets/images/img_5.png'},
-      {'title':'Legal','icon':'assets/images/img_6.png'},
-      {'title':'Buy&Sell','icon':'assets/images/img_7.png'},
-      {'title':'Accounting Services','icon':'assets/images/img_8.png'}
-    ];
 }
